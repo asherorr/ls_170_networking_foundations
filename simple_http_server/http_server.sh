@@ -2,10 +2,14 @@
 
 function server () {
   while true; do
-    if read -r message; then
-      echo "You said:'$message'"
+    if read -r method path version; then
+      if [[ "$method" == "GET" ]]; then
+        echo "HTTP/1.1 200 OK"
+      else
+        echo "HTTP/1.1 400 Bad Request"
+      fi
     else
-      break  # Exit if input stream is closed
+      break
     fi
   done
 }
