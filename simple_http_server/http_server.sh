@@ -4,9 +4,15 @@ function server () {
   while true; do
     if read -r method path version; then
       if [[ "$method" == "GET" ]]; then
-        echo "HTTP/1.1 200 OK"
+        filepath="./www$path"
+        if [[ -f "$filepath" ]]; then
+          echo -e "HTTP/1.1 200 OK\r\n"
+          cat "$filepath"
+        else
+          echo -e "HTTP/1.1 404 Not Found\r\n"
+        fi
       else
-        echo "HTTP/1.1 400 Bad Request"
+        echo -e "HTTP/1.1 400 Bad Request\r\n"
       fi
     else
       break
