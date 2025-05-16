@@ -1,21 +1,31 @@
 #!/bin/bash
 
 function server () {
-  while true; do
-    if read -r method path version; then
-      if [[ "$method" == "GET" ]]; then
-        filepath="./www$path"
-        if [[ -f "$filepath" ]]; then
-          echo -e "HTTP/1.1 200 OK\r\n"
-          cat "$filepath"
-        else
-          echo -e "HTTP/1.1 404 Not Found\r\n"
-        fi
+  while true
+  do
+    message_arr=()
+    check=true
+    while $check
+    do
+      read line
+      message_arr+=($line)
+      if [[ "${#line}" -eq 1 ]]
+      then
+        check=false
+      fi
+    done
+    method=${message_arr[0]}
+    path=${message_arr[1]}
+    if [[ $method = 'GET' ]]
+    then
+      if [[ -f "./www/$path" ]]
+      then
+        echo -ne 'HTTP/1.1 200 OK\r\n\r\n'; cat "./www/$path"
       else
-        echo -e "HTTP/1.1 400 Bad Request\r\n"
+        echo -ne 'HTTP/1.1 404 Not Found\r\n\r\n'
       fi
     else
-      break
+      echo -ne 'HTTP/1.1 400 Bad Request\r\n\r\n'
     fi
   done
 }
